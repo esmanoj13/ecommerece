@@ -9,6 +9,17 @@ module.exports = (err, req, res, next) => {
         const message=`cast error is created. Invalid ${err.path}`;
        err = new ErrorHandler(400,message);
     };
+    //jwt  token error
+    if(err.name === "jsonwebTokenError"){
+        const message=`json token error is created,please try again`;
+       err = new ErrorHandler(400,message);
+    };
+   //jwt Expire error
+   if(err.name === "TokenExpiredError"){
+    const message=`json token  is expired,please try again`;
+   err = new ErrorHandler(401,message);
+};
+
     res.status(err.statusCode).json({
         success: false,
         message: err.message,

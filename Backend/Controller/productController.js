@@ -5,6 +5,7 @@ const Apisearch = require("../utils/API search");
 // It is used to create product
 // This is used to handle the async error "asyncerror("
 exports.createProduct = asyncerror(async (req, res, next) => {
+    req.body.user=req.user.id;
     const product = await Product.create(req.body);
     res.status(201).json({
         success: true,
