@@ -5,7 +5,7 @@ const Apisearch = require("../utils/API search");
 // It is used to create product
 // This is used to handle the async error "asyncerror("
 exports.createProduct = asyncerror(async (req, res, next) => {
-    req.body.user=req.user.id;
+    req.body.user = req.user.id;
     const product = await Product.create(req.body);
     res.status(201).json({
         success: true,
@@ -26,7 +26,7 @@ exports.getproductDeatail = asyncerror(async (req, res, next) => {
 })
 // It is used to create all thre products
 exports.getallProducts = asyncerror(async (req, res) => {
-    let productperpage=10;
+    let productperpage = 10;
     const apisearch = new Apisearch(Product.find(), req.query).search().filter().pagination(productperpage);
     const products = await apisearch.query;
     res.status(200).json({
@@ -63,3 +63,79 @@ exports.deleteProduct = async (req, res, next) => {
         message: "Product is deleted"
     });
 }
+
+exports.cretaeProductRating = async (req, res, next) => {
+    const { rating, comment, productId } = req.body;
+    const review = {
+        user: req.user._id,
+        name: req.user.name,
+        rating: Number(rating),
+        comment,
+    };   
+    const product = await Product.findById(productId);
+    const isreviewed = product.reviews.find((rev)=>rev.user.toString()===req.user._id.toString()); 
+    if (isreviewed) {
+        product.reviews.forEach(rev => {
+            if (rev.user.toString() === req.user._id.toString())
+                (rev.rating = rating),
+                    (rev.comment = comment)
+        });
+    }
+    else {
+        product.reviews.push(review);
+        noofReviews = product.reviews.length;
+    }
+    let avg = 0;
+    product.reviews.forEach(rev => {
+        avg += rev.rating;
+    });
+    product.ratings = avg / product.reviews.length;
+    noofReviews = product.reviews.length;
+    await product.save({ validateBeforeSave: false });
+    res.status(200).json({
+        success: true,
+    });
+}
+exports.getallreviews = asyncerror(async (req, res, next) => {
+    const product = await Product.findById(req.query.productId);
+    if (!product) {
+        return next(new Errorhandler(404, "This product isn't have any review."));
+    }
+    res.status(200).json({
+        success: true,
+        reviews: product.reviews
+    });
+});
+exports.deleteReview = asyncerror(async (req, res, next) => {
+    const product = await Product.findById(req.query.productId);
+    const reviews = product.reviews.filter((rev) => rev._id.toString() !== req.query.id.toString());
+    console.log(reviews);
+    if (!reviews) {
+        res.status(400).json({
+            success: false,
+            message: "review is not present"
+        });
+    }
+    let avg = 0;
+    reviews.forEach(rev => {
+        avg += rev.rating;
+    });
+    ratings = avg / reviews.length;
+    noofReviews = reviews.length;
+    await Product.findByIdAndUpdate(req.query.productId,
+        {
+            reviews,
+            ratings,
+            noofReviews,
+        },
+        {
+            new: true,
+            runValidators: true,
+            userFindAndModify: false,
+        }
+    );
+    res.status(200).json({
+        success: true,
+    });
+    console.log(ratings);
+});

@@ -4,65 +4,72 @@ const mongoose = require("mongoose");
 const productSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [true, "Please enter the product name"]
+        required: [true, "Please enter the product name"],
     },
     description: {
         type: String,
-        required: [true, "Please enter the description name"]
+        required: [true, "Please enter the description name"],
     },
     category: {
         type: String,
-        required: [true, "Please enter the category name"]
+        required: [true, "Please enter the category name"],
     },
     price: {
         type: Number,
         required: [true, "Please enter the price"],
-        maxLength: [8, "Price shouldn't be greater than 8 digit"]
+        maxLength: [8, "Price shouldn't be greater than 8 digit"],
     },
     stock: {
-        type: Number,     
-        default: 0
-    },
-    rating: {
         type: Number,
-        default: 0
+        default: 0,
+    },
+    ratings: {
+        type: Number,
+        default: 0,
     },
     productImage: [{
         productId: {
             type: String,
-            required: true
+            required: true,
         },
         url: {
             type: String,
-            required: true
+            required: true,
         }
     }
     ],
     countrating: {
         type: Number,
-        default: 0
+        default: 0,
+    },
+    user: {
+        type:mongoose.Schema.ObjectId,
+        ref: "User",
+        required: true,
+    },
+    createdat: {
+        type: Date,
+        createdAt: new Date(),
     },
     reviews: [
         {
+            user: {
+                type: mongoose.Schema.ObjectId,
+                ref: "User",
+                required: true,
+            },
             name: {
-                type: String
-                
+                type: String,
             },
             rating: {
                 type: Number,
-                default: 0
+                default: 0,
             },
             comment: {
-                type: String
-            
+                type: String,
             }
         }
     ],
-    createdat: {
-        type: Date,
-        createdat: new Date
-    }
-}
-)
+});
 // this is used to exprt the product schema to controller
 module.exports = mongoose.model("Product", productSchema);
