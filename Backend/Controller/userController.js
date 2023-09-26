@@ -67,7 +67,7 @@ exports.logoutuser = asyncerror(async (req, res, next) => {
     message: "user is logout",
   });
 });
-
+// Forgot password
 exports.forgotpassword = asyncerror(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
@@ -94,7 +94,7 @@ exports.forgotpassword = asyncerror(async (req, res, next) => {
   }
 
 });
-
+// reset password
 exports.resetpassword = asyncerror(async (req, res, next) => {
   // creating token hash
   const resetpasswordtoken = crypto.createHash("sha256").update(req.params.token).digest("hex");
@@ -159,7 +159,7 @@ exports.changeuserdetails = asyncerror(async (req, res, next) => {
     user
   })
 });
-//In this we get all user by admin so admin can easily check these user detail without seeing password.
+//In this we get all user by admin so admin can easily check these users detail without seeing password.
 exports.getallusers = asyncerror(async (req, res, next) => {
   //find method given the all the user whose are sign in in the website. 
   const users = await User.find();
@@ -185,7 +185,7 @@ exports.getsingleUser = asyncerror(async (req, res, next) => {
 });
 
 // Update the role of a person
-exports.changeuserRole = asyncerror(async (req, res,next)=> {
+exports.changeuserRole = asyncerror(async (req, res, next) => {
 
   const newDetails = {
     name: req.body.name,
@@ -202,7 +202,7 @@ exports.changeuserRole = asyncerror(async (req, res,next)=> {
     user
   });
 });
-
+// delete user
 exports.deleteuser = asyncerror(async (req, res, next) => {
   const user = await User.findByIdAndDelete(req.params.id);
   if (!user) {

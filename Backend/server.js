@@ -2,7 +2,6 @@
 const app =require("./app");
 const dotenv = require("dotenv");
 const connectTodb=require("./config/database")
-console.log("hi");
 // handling uncaught exception
 process.on("uncaughtexception",(err)=>{
 console.log(`Error:${err.message}`);

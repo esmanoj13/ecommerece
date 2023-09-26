@@ -12,6 +12,18 @@ exports.createProduct = asyncerror(async (req, res, next) => {
         product
     });
 })
+// It is used to get all products
+exports.getallProducts = asyncerror(async (req, res,next) => {   
+    let productperpage = 5;
+    const productCount=await Product.countDocuments();
+    const apisearch = new Apisearch(Product.find(), req.query).search().filter().pagination(productperpage);
+    const products = await apisearch.query;
+    res.status(200).json({
+        success: true,
+        products,
+        productCount        
+    });
+});
 // To get the product details of the product
 exports.getproductDeatail = asyncerror(async (req, res, next) => {
     const product = await Product.findById(req.params.id);
@@ -21,21 +33,13 @@ exports.getproductDeatail = asyncerror(async (req, res, next) => {
     }
     res.status(200).json({
         success: true,
-        product
-    });
-})
-// It is used to create all thre products
-exports.getallProducts = asyncerror(async (req, res) => {
-    let productperpage = 10;
-    const apisearch = new Apisearch(Product.find(), req.query).search().filter().pagination(productperpage);
-    const products = await apisearch.query;
-    res.status(200).json({
-        success: true,
-        products
+        product,
+       
     });
 })
 
-// it is used to update the product -for this we use id 
+
+// It is used to update the product -for this we use id 
 exports.replaceProduct = async (req, res, next) => {
     let product = await Product.findById(req.params.id);// here params is used to get particulat id of the product
     if (!product) {
@@ -63,7 +67,7 @@ exports.deleteProduct = async (req, res, next) => {
         message: "Product is deleted"
     });
 }
-
+// It is used to create the product rating
 exports.cretaeProductRating = async (req, res, next) => {
     const { rating, comment, productId } = req.body;
     const review = {
@@ -96,6 +100,7 @@ exports.cretaeProductRating = async (req, res, next) => {
         success: true,
     });
 }
+// It is used to get all reviews.
 exports.getallreviews = asyncerror(async (req, res, next) => {
     const product = await Product.findById(req.query.productId);
     if (!product) {
@@ -106,6 +111,7 @@ exports.getallreviews = asyncerror(async (req, res, next) => {
         reviews: product.reviews
     });
 });
+// It is used to delete  reviews.
 exports.deleteReview = asyncerror(async (req, res, next) => {
     const product = await Product.findById(req.query.productId);
     const reviews = product.reviews.filter((rev) => rev._id.toString() !== req.query.id.toString());
